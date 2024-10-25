@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * A class to fetch stock news from a REST API.
@@ -18,10 +19,10 @@ public class FetchApi {
      * Fetches stock news for specified stock names.
      * @return JSON response from the API or null if an error occurs.
      */
-    public String fetchStockNews() {
+    public String fetchStockNews(String[] stock_name) {
         try {
             // Use HTTP, not HTTPS
-            URL url = new URL("http://localhost:5000/fetch_news");
+            URL url = new URL("http://localhost:5000/fetch_stock_price");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -29,8 +30,10 @@ public class FetchApi {
             connection.setDoOutput(true);
 
             // JSON input to send
-            String jsonInputString = "{\"stock_names\": [\"TATA\"]}";
+              // Assuming stock_name is a single element array
+            String jsonInputString = "{\"stock_names\": [\"" + stock_name[0] + "\"]}"; // Adjusted for proper JSON structure
 
+            
             // Send JSON data
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
@@ -53,6 +56,7 @@ public class FetchApi {
             // Print the response
             System.out.println("Response: " + response.toString());
             if (code == HttpURLConnection.HTTP_OK) {
+                
                 return response.toString();
             }
 
